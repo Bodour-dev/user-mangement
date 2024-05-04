@@ -81,25 +81,25 @@ function DialogComponent(props) {
         <DialogContent>
             <form onSubmit={handlesubmit}>
                 <Stack spacing={2} margin={2}>
-                    <TextField required error={userForm.name.length === 0} name="name" value={userForm.name} onChange={e => handleTextChange(e)} variant="outlined" label="Name"></TextField>
-                    <TextField required error={userForm.email.length === 0} name="email" type='email' value={userForm.email} onChange={e => handleTextChange(e)} variant="outlined" label="Email"></TextField>
-                    <TextField required error={userForm.username.length === 0} name="username" value={userForm.username}  onChange={(e) => handleTextChange(e)} variant="outlined" label="Username"></TextField>
+                        <TextField required error={!userForm.name} name="name" value={userForm.name} onChange={handleTextChange} variant="outlined" label="Name" />
+                        <TextField required error={!userForm.email} name="email" type='email' value={userForm.email} onChange={handleTextChange} variant="outlined" label="Email" />
+                        <TextField required error={!userForm.username} name="username" value={userForm.username}  onChange={handleTextChange} variant="outlined" label="Username" />
                     <div className='d-flex'>
-                    <TextField required className='w-50' error={userForm.address.street.length === 0} name="street" value={userForm.address.street} onChange={(e) => handleTextChange(e)} variant="outlined" label="Street" ></TextField>
-                    <TextField className='w-50' name="suite" value={userForm.address.suite} onChange={(e) => handleTextChange(e)} variant="outlined" label="Suite"></TextField>
-                    <TextField className='w-50' name="city" value={userForm.address.city} onChange={(e) => handleTextChange(e)} variant="outlined" label="City"></TextField>
-                    <TextField className='w-50' name="zipcode" value={userForm.address.zipcode} onChange={(e) => handleTextChange(e)} variant="outlined" label="Zipcode"></TextField>
-                    <TextField className='w-50' name="lat" type="number" value={userForm.address.geo?.lat} onChange={(e) => handleTextChange(e)} variant="outlined" label="Latitude"></TextField>
-                    <TextField className='w-50' name="lng" type="number" value={userForm.address.geo?.lng} onChange={(e) => handleTextChange(e)} variant="outlined" label="Longutide"></TextField>
+                        <TextField required className='w-50' error={!userForm.address.street} name="street" value={userForm.address.street} onChange={handleTextChange} variant="outlined" label="Street" />
+                        <TextField className='w-50' name="suite" value={userForm.address.suite} onChange={handleTextChange} variant="outlined" label="Suite" />
+                        <TextField className='w-50' name="city" value={userForm.address.city} onChange={handleTextChange} variant="outlined" label="City" />
+                        <TextField className='w-50' name="zipcode" value={userForm.address.zipcode} onChange={handleTextChange} variant="outlined" label="Zipcode" />
+                        <TextField className='w-50' name="lat" type="number" value={userForm.address.geo.lat} onChange={handleTextChange} variant="outlined" label="Latitude" />
+                        <TextField className='w-50' name="lng" type="number" value={userForm.address.geo.lng} onChange={handleTextChange} variant="outlined" label="Longutide" />
                     </div>
-                    <TextField required error={userForm.phone.length === 0} name="phone" value={userForm.phone} onChange={e => handleTextChange(e)} variant="outlined" label="Phone"></TextField>
-                    <TextField required error={userForm.website.length === 0} name="website" value={userForm.website} onChange={e => handleTextChange(e)} variant="outlined" label="Website"></TextField>
+                        <TextField required error={!userForm.phone} name="phone" value={userForm.phone} onChange={handleTextChange} variant="outlined" label="Phone" />
+                        <TextField required error={!userForm.website} name="website" value={userForm.website} onChange={handleTextChange} variant="outlined" label="Website" />
                     <div className='d-flex'>
-                    <TextField required sx={{ width: 1 }} error={userForm.company.name.length === 0} name="companyName" value={userForm.company.name} onChange={(e) => handleTextChange(e)} variant="outlined" label="Company Name"></TextField>
-                    <TextField required className='w-50' error={userForm.company.catchPhrase.length === 0} name="catchPhrase"  value={userForm.company.catchPhrase} onChange={(e) => handleTextChange(e)} variant="outlined" label="Catch Phrase"></TextField>
-                    <TextField required className='w-50' error={userForm.company.bs.length === 0} name="bs" value={userForm.company.bs} onChange={(e) => handleTextChange(e)} variant="outlined" label="BS"></TextField>
+                        <TextField required sx={{ width: 1 }} error={!userForm.company.name} name="companyName" value={userForm.company.name} onChange={handleTextChange} variant="outlined" label="Company Name" />
+                        <TextField required className='w-50' error={!userForm.company.catchPhrase} name="catchPhrase"  value={userForm.company.catchPhrase} onChange={handleTextChange} variant="outlined" label="Catch Phrase" />
+                        <TextField required className='w-50' error={!userForm.company.bs} name="bs" value={userForm.company.bs} onChange={handleTextChange} variant="outlined" label="BS" />
                     </div>
-                    <Button sx={{ my: '1rem!important' }} variant="contained" type="submit">Submit</Button>
+                        <Button sx={{ my: '1rem!important' }} variant="contained" type="submit">Submit</Button>
                 </Stack>
             </form>
         </DialogContent>
