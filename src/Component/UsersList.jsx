@@ -1,67 +1,50 @@
-import { Button, CircularProgress, Paper } from "@mui/material";
+import { CircularProgress, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
-import { GetAllUsers, GetUserById, RemoveUser, UpdateUser } from "../Redux/ActionCreater";
-import { connect, useDispatch, useSelector } from "react-redux";
-import { OpenPopup } from "../Redux/Action";
+import { GetAllUsers } from "../Redux/ActionCreater";
+import { useDispatch, useSelector } from "react-redux";
 import TableComponent from "./TableComponent";
 import DialogComponent from "./DialogComponent";
 
-const UsersList = (props) => {
-    let userState = props.userState;
-    const dispatch = useDispatch();
+const UsersList = () => {
+  const dispatch = useDispatch();
 
-    // edit handling
-    const [openDialog, setOpenDialog] = useState(false);
-    const [isedit, setIsEdit] = useState(false);
-    const [titleDialog, setTitleDialog] = useState('Create User');
-    const editobj = useSelector((state) => state.user.userObj);
+  // edit handling
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("Create User");
+  const { isLoading, errorMessage, userObj, usersList } = useSelector((state) => state.user);
 
-    const handleEdit = (id) => {
-        setIsEdit(true);
-        setTitleDialog('Update User');
-        setOpenDialog(true);
-        dispatch(GetUserById(id));
-    }
-    // Create user
-    const functionadd = () => {
-        setIsEdit(false);
-        setTitleDialog('Create User');
-        openpopup();
-    }
-    const openpopup = () => {
-        setOpenDialog(true);
-        dispatch(OpenPopup())
-    }
+  useEffect(() => {
+    dispatch(GetAllUsers());
+  }, [dispatch]);
 
-    useEffect(() => {
-        props.loadUser();
-    }, []);
+  if (isLoading) {
+    return (<div className="spinner"><CircularProgress /></div>);
+  }
 
-    return (
-        userState.isloading ?<div className="spinner"><CircularProgress /></div>  :
-        userState.errormessage ? <div><h2>{userState.errormessage}</h2></div> :
-            <div>
-                <Paper sx={{ margin: '1%' }}>
-                    <div style={{ margin: '1%' }}>
-                        <Button onClick={functionadd} variant="contained" color="success">Add New (+)</Button>
-                    </div>
-                    <TableComponent userState={userState} handleEdit={handleEdit}/>
-                </Paper>
-                <DialogComponent openDialog={openDialog} setOpenDialog={setOpenDialog} isedit={isedit} editobj={editobj} titleDialog={titleDialog}/>
-            </div>
-    );
-}
+  if (errorMessage) {
+    return (<div><h2>{errorMessage}</h2></div>);
+  }
+  
+  return (
+    <div>
+      <Paper sx={{ margin: "1%" }}>
+        <TableComponent
+          usersList={usersList}
+          setIsEdit={setIsEdit}
+          setIsDialogOpen={setIsDialogOpen}
+          setDialogTitle={setDialogTitle}
+        />
+      </Paper>
+      <DialogComponent
+        isDialogOpen={isDialogOpen}
+        isEdit={isEdit}
+        setIsDialogOpen={setIsDialogOpen}
+        editObj={userObj}
+        dialogTitle={dialogTitle}
+      />
+    </div>
+  );
+};
 
-const mapStatetoProps = (state) => {
-    return {
-        userState: state.user
-    }
-}
-
-const mapDispatchtoProps = (dispatch) => {
-    return {
-        loadUser: () => dispatch(GetAllUsers())
-    }
-}
-
-export default connect(mapStatetoProps, mapDispatchtoProps)(UsersList);
+export default UsersList;

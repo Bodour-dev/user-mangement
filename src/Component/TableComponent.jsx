@@ -1,76 +1,129 @@
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material'
-import React, { useState } from 'react'
-import { RemoveUser } from '../Redux/ActionCreater';
-import { COLUMNS_USERS_TABLE } from '../Constants';
-import { useDispatch } from 'react-redux';
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+} from "@mui/material";
+import React, { useState } from "react";
+import { GetUserById, RemoveUser } from "../Redux/ActionCreater";
+import { useDispatch } from "react-redux";
+import { COLUMNS_USERS_TABLE } from "../Constants";
+import { OpenPopup } from "../Redux/Action";
 
-function TableComponent(props) {
-    const columns = COLUMNS_USERS_TABLE;
-    // pagination handling
-    const [rowperpage, setRowPerPage] = useState(5);
-    const [page, setPage] = useState(0);
-    const dispatch = useDispatch();
-    const handlepagechange = (event, newpage) => {
-        setPage(newpage);
+function TableComponent({
+  usersList,
+  setIsEdit,
+  setDialogTitle,
+  setIsDialogOpen,
+}) {
+  const columns = COLUMNS_USERS_TABLE;
+  const dispatch = useDispatch();
+  // pagination handling
+  const [rowperpage, setRowPerPage] = useState(5);
+  const [page, setPage] = useState(0);
+
+  const handleEditUser = (userId) => {
+    setIsEdit(true);
+    setDialogTitle("Update User");
+    setIsDialogOpen(true);
+    dispatch(GetUserById(userId));
+  };
+  // Create user
+  const handleAddUser = () => {
+    setIsEdit(false);
+    setDialogTitle("Create User");
+    setIsDialogOpen(true);
+    dispatch(OpenPopup());
+  };
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleRowsPerPageChange = (event) => {
+    setRowPerPage(+event.target.value);
+    setPage(0);
+  };
+  const handleRemoveUser = (userId) => {
+    if (window.confirm("Do you want to remove this user?")) {
+      dispatch(RemoveUser(userId));
     }
-    const handlerowperpagechange = (event) => {
-        setRowPerPage(+event.target.value);
-        setPage(0);
-    }
-    const handleRemove = (id) => {
-        if (window.confirm('Do you want to remove this user?')) {
-            dispatch(RemoveUser(id));
-        }
-    }
+  };
 
   return (
-    <div style={{ margin: '1%' }}>
-    <TableContainer>
+    <div style={{ margin: "1%" }}>
+      <div style={{ margin: "1%" }}>
+        <Button onClick={handleAddUser} variant="contained" color="success">
+          Add New (+)
+        </Button>
+      </div>
+      <TableContainer>
         <Table>
-            <TableHead>
-                <TableRow style={{ backgroundColor: '#263238' }}>
-                    {columns.map((column) =>
-                        <TableCell key={column.id} style={{ color: 'white' }}>{column.name}</TableCell>
-                    )}
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {props.userState.usersList &&
-                    props.userState.usersList
-                    .slice(page * rowperpage, page * rowperpage + rowperpage)
-                    .map((row, i) => {
-                        return (
-                            <TableRow key={i}>
-                                <TableCell>{row.id}</TableCell>
-                                <TableCell>{row.name}</TableCell>
-                                <TableCell>{row.email}</TableCell>
-                                <TableCell>{row.phone}</TableCell>
-                                <TableCell>{row.address.city} - {row.address.street}</TableCell>
-                                <TableCell>{row.website}</TableCell>
-                                <TableCell>{row.company.name}</TableCell>
-                                <TableCell>
-                                    <Button onClick={() => { props.handleEdit(row.id) }} variant="contained" color="primary">Edit</Button>
-                                    <Button onClick={() => { handleRemove(row.id) }} variant="contained" color="error">Delete</Button>
-                                </TableCell>
-                            </TableRow>
-                        )
-                    })
-                }
-            </TableBody>
+          <TableHead>
+            <TableRow style={{ backgroundColor: "#263238" }}>
+              {columns.map((column) => (
+                <TableCell key={column.id} style={{ color: "white" }}>
+                  {column.name}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {usersList &&
+              usersList
+                .slice(page * rowperpage, page * rowperpage + rowperpage)
+                .map((user) => {
+                  return (
+                    <TableRow key={user.id}>
+                      <TableCell>{user.id}</TableCell>
+                      <TableCell>{user.name}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>{user.phone}</TableCell>
+                      <TableCell>
+                        {user.address.city} - {user.address.street}
+                      </TableCell>
+                      <TableCell>{user.website}</TableCell>
+                      <TableCell>{user.company.name}</TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => {
+                            handleEditUser(user.id);
+                          }}
+                          variant="contained"
+                          color="primary"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            handleRemoveUser(user.id);
+                          }}
+                          variant="contained"
+                          color="error"
+                        >
+                          Delete
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+          </TableBody>
         </Table>
-    </TableContainer>
-    <TablePagination
+      </TableContainer>
+      <TablePagination
         rowsPerPageOptions={[2, 5, 10, 20]}
         rowsPerPage={rowperpage}
         page={page}
-        count={props.userState.usersList.length}
-        component={'div'}
-        onPageChange={handlepagechange}
-        onRowsPerPageChange={handlerowperpagechange}
-    >
-    </TablePagination>
-</div>
-  )
+        count={usersList.length}
+        component={"div"}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}
+      ></TablePagination>
+    </div>
+  );
 }
 
-export default TableComponent
+export default TableComponent;

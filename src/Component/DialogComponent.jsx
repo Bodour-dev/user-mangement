@@ -1,86 +1,87 @@
 import { Button, Dialog, DialogContent, DialogTitle, IconButton, Stack, TextField } from '@mui/material';
 import CloseIcon from "@mui/icons-material/Close";
 import React, { useEffect, useState } from 'react'
-import { INITIAL_USER_STATE } from '../Constants';
 import { useDispatch } from 'react-redux';
 import { CreateUser, UpdateUser } from '../Redux/ActionCreater';
+import { INITIAL_USER_STATE } from '../Constants';
 
-function DialogComponent(props) {
+function DialogComponent({ isDialogOpen, setIsDialogOpen, isEdit, editObj, dialogTitle }) {
     const [userForm, setUserForm] = useState(INITIAL_USER_STATE);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (Object.keys(props.editobj).length > 0) {
-          setUserForm({...userForm,...props.editobj});
+        if (Object.keys(editObj).length > 0) {
+          setUserForm({...userForm,...editObj});
         } else {
-            clearstate();
+          setUserForm(INITIAL_USER_STATE);
         }
-    }, [props.editobj]);
+    }, [editObj]);
 
     const handleTextChange = (e) => {
-        const addressDetails = ["street", "suite", "city", "zipcode"];
-        const companyDetails = ["companyName", "catchPhrase", "bs"];
-        let addressCheck = addressDetails.some((item) => item == e.target.name);
-        let companyCheck = companyDetails.some((item) => item == e.target.name);
-        if(addressCheck){
-            setUserForm({
-                ...userForm,
-                address:{
-                    ...userForm.address,
-                    [e.target.name]:e.target.value
-                }
-            })
-        } else if(e.target.name == 'lat' || e.target.name == "lng"){
-            setUserForm({
-                ...userForm,
-                address:{
-                    ...userForm.address,
-                    geo:{
-                        ...userForm.address.geo,
-                        [e.target.name]:e.target.value
-                    }
-                }
-            })    
-        } else if(companyCheck){
-            setUserForm({
-                ...userForm,
-                company:{
-                    ...userForm.company,
-                    [e.target.name !== "companyName" ? e.target.name : 'name']:e.target.value
-                }
-            })
-        }else{
-            setUserForm({...userForm,[e.target.name]:e.target.value});
+        const { name, value } = e.target;
+        const addressFields = ["street", "suite", "city", "zipcode"];
+        const companyFields = ["companyName", "catchPhrase", "bs"];
+    
+        if (addressFields.includes(name)) {
+          setUserForm((prevState) => ({
+            ...prevState,
+            address: {
+              ...prevState.address,
+              [name]: value,
+            },
+          }));
+        } else if (name === 'lat' || name === "lng") {
+          setUserForm((prevState) => ({
+            ...prevState,
+            address: {
+              ...prevState.address,
+              geo: {
+                ...prevState.address.geo,
+                [name]: value,
+              },
+            },
+          }));
+        } else if (companyFields.includes(name)) {
+          setUserForm((prevState) => ({
+            ...prevState,
+            company: {
+              ...prevState.company,
+              [name !== "companyName" ? name : 'name']: value,
+            },
+          }));
+        } else {
+          setUserForm((prevState) => ({
+            ...prevState,
+            [name]: value,
+          }));
         }
     };
-    const clearstate = () => {
-        setUserForm(INITIAL_USER_STATE);
-    }
-    const closepopup = () => {
-        props.setOpenDialog(false);
-    }
-    const handlesubmit = (e) => {
+
+    const handleSubmit = (e) => {
         e.preventDefault();
         const _obj = userForm;
-        console.log(_obj);
-        debugger
-        if (props.isedit) {
+        if (isEdit) {
             dispatch(UpdateUser(_obj));
         } else {
             dispatch(CreateUser(_obj));
         }
-        closepopup();
+        setIsDialogOpen(false);
     }
 
+    const handleCloseDialog = () => {
+        setIsDialogOpen(false);
+        setUserForm(INITIAL_USER_STATE);
+    };
+
   return (
-    <Dialog open={props.openDialog} onClose={closepopup} fullWidth maxWidth="sm">
+    <Dialog open={isDialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="sm">
         <DialogTitle>
-            <span>{props.titleDialog}</span>
-            <IconButton style={{ float: 'right' }} onClick={closepopup}><CloseIcon color="primary"></CloseIcon></IconButton>
+            <span>{dialogTitle}</span>
+            <IconButton style={{ float: 'right' }} onClick={handleCloseDialog}><CloseIcon color="primary"></CloseIcon></IconButton>
         </DialogTitle>
         <DialogContent>
-            <form onSubmit={handlesubmit}>
-                <Stack spacing={2} margin={2}>
+            <form onSubmit={handleSubmit}>
+                <Stack spacing={2} margin={1}>
                         <TextField required error={!userForm.name} name="name" value={userForm.name} onChange={handleTextChange} variant="outlined" label="Name" />
                         <TextField required error={!userForm.email} name="email" type='email' value={userForm.email} onChange={handleTextChange} variant="outlined" label="Email" />
                         <TextField required error={!userForm.username} name="username" value={userForm.username}  onChange={handleTextChange} variant="outlined" label="Username" />
@@ -99,7 +100,7 @@ function DialogComponent(props) {
                         <TextField required className='w-50' error={!userForm.company.catchPhrase} name="catchPhrase"  value={userForm.company.catchPhrase} onChange={handleTextChange} variant="outlined" label="Catch Phrase" />
                         <TextField required className='w-50' error={!userForm.company.bs} name="bs" value={userForm.company.bs} onChange={handleTextChange} variant="outlined" label="BS" />
                     </div>
-                        <Button sx={{ my: '1rem!important' }} variant="contained" type="submit">Submit</Button>
+                        <Button sx={{ mt: '1rem!important' }} variant="contained" type="submit">Submit</Button>
                 </Stack>
             </form>
         </DialogContent>

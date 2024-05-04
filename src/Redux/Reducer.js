@@ -1,10 +1,10 @@
 import { MAKE_REQ, OPEN_POPUP, REQ_ADD_SUCC, REQ_DELETE_SUCC, REQ_GETALL_FAIL, REQ_GETALL_SUCC, REQ_GETBYID_SUCC, REQ_UPDATE_SUCC } from "./ActionType"
 
 export const initialstate = {
-    isloading: false,
+    isLoading: false,
     usersList: [],
     userObj: {},
-    errormessage: ''
+    errorMessage: ''
 }
 
 export const UserReducer = (state = initialstate, action) => {
@@ -12,12 +12,12 @@ export const UserReducer = (state = initialstate, action) => {
         case MAKE_REQ:
             return {
                 ...state,
-                isloading: true
+                isLoading: true
             }
         case REQ_GETALL_SUCC:
             return {
                 ...state,
-                isloading: false,
+                isLoading: false,
                 usersList: action.payload
             }
         case REQ_GETBYID_SUCC:
@@ -28,9 +28,9 @@ export const UserReducer = (state = initialstate, action) => {
         case REQ_GETALL_FAIL:
             return {
                 ...state,
-                isloading: false,
+                isLoading: false,
                 usersList: [],
-                errormessage: action.payload
+                errorMessage: action.payload
             }
         case OPEN_POPUP:
             return {

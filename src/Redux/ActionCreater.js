@@ -13,8 +13,7 @@ export const GetAllUsers = () => {
             }).catch(err => {
                 dispatch(getAllRequestFail(err.message));
             });
-        },1000)
-       
+        }, 1000);
     }
 }
 
